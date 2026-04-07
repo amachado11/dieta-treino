@@ -3,55 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Treino & Dieta - André</title>
+    <title>Treino & Dieta - Evolução</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg: #121212;
-            --card: #1e1e1e;
-            --accent: #ccff00; /* Verde Neon */
-            --text: #ffffff;
-            --text-dim: #a0a0a0;
-            --check: #2ecc71;
+            --bg: #121212; --card: #1e1e1e; --accent: #ccff00; 
+            --text: #ffffff; --text-dim: #a0a0a0; --check: #2ecc71;
         }
-
         * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         body { background: var(--bg); color: var(--text); margin: 0; padding-bottom: 80px; }
         
-        header { padding: 20px; border-bottom: 1px solid #333; text-align: center; }
-        h1 { font-size: 1.2rem; color: var(--accent); margin: 0; text-transform: uppercase; }
+        header { padding: 15px; border-bottom: 1px solid #333; text-align: center; position: sticky; top: 0; background: var(--bg); z-index: 10; }
+        h1 { font-size: 1rem; color: var(--accent); margin-bottom: 10px; text-transform: uppercase; }
+
+        /* Seletor de Dias */
+        .day-selector { display: flex; gap: 5px; overflow-x: auto; padding: 5px; scrollbar-width: none; }
+        .day-btn { background: #333; border: none; color: #fff; padding: 8px 15px; border-radius: 20px; white-space: nowrap; font-size: 0.8rem; cursor: pointer; }
+        .day-btn.active { background: var(--accent); color: #000; font-weight: bold; }
 
         .container { padding: 15px; max-width: 500px; margin: auto; }
-        .section-title { font-size: 1rem; margin: 20px 0 10px; border-left: 4px solid var(--accent); padding-left: 10px; }
-
-        /* Cards Estilo */
-        .card { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid #333; transition: 0.3s; }
-        .card.done { opacity: 0.5; border-color: var(--check); }
+        .card { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid #333; }
+        .card.done { border-color: var(--check); opacity: 0.7; }
         
         .row { display: flex; justify-content: space-between; align-items: center; }
-        .info { flex: 1; }
-        .info b { display: block; font-size: 1rem; }
-        .info span { font-size: 0.85rem; color: var(--text-dim); }
-        .tip { font-style: italic; font-size: 0.75rem; color: var(--accent); margin-top: 4px; display: block; }
-
-        /* Inputs de Carga e Checks */
-        input[type="number"] { width: 60px; background: #333; border: 1px solid #444; color: #fff; border-radius: 4px; padding: 5px; text-align: center; }
-        .btn-check { background: none; border: 2px solid #444; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; color: transparent; margin-left: 10px; }
-        .done .btn-check { background: var(--check); border-color: var(--check); color: #000; display: flex; align-items: center; justify-content: center; }
+        .info b { display: block; font-size: 0.95rem; }
+        .info span { font-size: 0.8rem; color: var(--text-dim); }
+        
+        input[type="number"] { width: 65px; background: #333; border: 1px solid #444; color: #fff; border-radius: 4px; padding: 5px; }
+        .btn-check { background: none; border: 2px solid #444; border-radius: 50%; width: 30px; height: 30px; margin-left: 10px; display: flex; align-items: center; justify-content: center; color: transparent;}
+        .done .btn-check { background: var(--check); border-color: var(--check); color: #000; }
         .done .btn-check::after { content: '✓'; font-weight: bold; }
 
-        /* Menu Inferior */
-        nav { position: fixed; bottom: 0; width: 100%; background: #1a1a1a; display: flex; border-top: 1px solid #333; z-index: 100; }
-        nav button { flex: 1; background: none; border: none; color: var(--text-dim); padding: 15px 0; font-size: 0.8rem; cursor: pointer; }
-        nav button.active { color: var(--accent); font-weight: bold; }
+        /* Relatórios */
+        canvas { background: #1e1e1e; border-radius: 12px; padding: 10px; margin-top: 10px; }
 
+        nav { position: fixed; bottom: 0; width: 100%; background: #1a1a1a; display: flex; border-top: 1px solid #333; }
+        nav button { flex: 1; background: none; border: none; color: var(--text-dim); padding: 15px 0; font-size: 0.75rem; }
+        nav button.active { color: var(--accent); }
         .hidden { display: none; }
-        #water-counter { text-align: center; font-size: 1.5rem; margin: 10px 0; color: #3498db; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1 id="current-day-title">Meus Treinos</h1>
+    <h1 id="view-title">Meu Treino</h1>
+    <div id="day-nav" class="day-selector">
+        <button onclick="changeDay(1)" class="day-btn" id="d1">SEG</button>
+        <button onclick="changeDay(2)" class="day-btn" id="d2">TER</button>
+        <button onclick="changeDay(3)" class="day-btn" id="d3">QUA</button>
+        <button onclick="changeDay(4)" class="day-btn" id="d4">QUI</button>
+        <button onclick="changeDay(5)" class="day-btn" id="d5">SEX</button>
+        <button onclick="changeDay(6)" class="day-btn" id="d6">SÁB</button>
+        <button onclick="changeDay(0)" class="day-btn" id="d0">DOM</button>
+    </div>
 </header>
 
 <div class="container">
@@ -60,147 +64,131 @@
     </div>
 
     <div id="tab-dieta" class="hidden">
-        <div id="water-counter">💧 <span id="water-val">0</span> / 3.0L</div>
-        <button onclick="addWater()" style="width:100%; padding:10px; border-radius:8px; background:#3498db; border:none; color:#fff; margin-bottom:20px;">+ Bebi 250ml</button>
+        <div class="card" style="text-align: center;">
+            <div style="font-size: 1.2rem; margin-bottom: 10px;">💧 <span id="water-val">0</span> / 3.0L</div>
+            <button onclick="addWater()" style="width:100%; padding:12px; border-radius:8px; background:#3498db; border:none; color:#fff; font-weight:bold;">+ Beber 250ml</button>
+        </div>
         <div id="dieta-content"></div>
+    </div>
+
+    <div id="tab-relatorio" class="hidden">
+        <h3>Evolução de Peso</h3>
+        <div class="card">
+            <input type="number" id="peso-input" step="0.1" placeholder="Peso Atual (kg)" style="width: 120px;">
+            <button onclick="savePeso()" style="padding: 6px 15px; border-radius: 4px; background: var(--accent); border:none; font-weight:bold;">Registrar</button>
+            <canvas id="weightChart"></canvas>
+        </div>
+        <h3>Consistência Semanal</h3>
+        <p style="font-size: 0.8rem; color: var(--text-dim);">Checks realizados no treino e dieta.</p>
+        <canvas id="statChart"></canvas>
     </div>
 </div>
 
 <nav>
     <button onclick="showTab('treino')" id="btn-treino" class="active">🏋️ TREINO</button>
     <button onclick="showTab('dieta')" id="btn-dieta">🍎 DIETA</button>
+    <button onclick="showTab('relatorio')" id="btn-relatorio">📈 EVOLUÇÃO</button>
 </nav>
 
 <script>
+    let currentDay = new Date().getDay();
     const dataTreinos = {
-        0: { nome: "Descanso Ativo", exercicios: [{n: "Caminhada ou Bike Leve", s: "40-60 min", t: "Recuperação"}] },
-        1: { nome: "Segunda: Treino A + ABD", exercicios: [
-            {n: "Supino Inclinado (Halteres)", s: "4 x 10", t: ""},
-            {n: "Supino Reto (Halteres)", s: "3 x 8-10", t: ""},
-            {n: "Desenvolvimento Militar", s: "4 x 10", t: ""},
-            {n: "Elevação Lateral", s: "4 x 15", t: "Dica: Falha na última!"},
-            {n: "Tríceps Testa", s: "3 x 12", t: ""},
-            {n: "Abdômen Supra (Carga)", s: "4 x 15-20", t: ""},
-            {n: "Cardio: Caminhada Acelerada", s: "20 min", t: ""}
-        ]},
-        2: { nome: "Terça: Treino B + GLÚTEO", exercicios: [
-            {n: "Levantamento Terra", s: "3 x 6-8", t: "Foco no Core"},
-            {n: "Puxada Alta (Aberta)", s: "4 x 10", t: ""},
-            {n: "Remada Cavalinho", s: "4 x 10", t: ""},
-            {n: "Elevação Pélvica", s: "4 x 10-12", t: "Foco total Glúteo"},
-            {n: "Rosca Direta (Barra W)", s: "3 x 10", t: ""},
-            {n: "Glúteo Coice (Polia)", s: "3 x 15 (cada)", t: ""},
-            {n: "Cardio: Elíptico/Bike", s: "20 min", t: ""}
-        ]},
-        3: { nome: "Quarta: Treino C + ABD (Pernas)", exercicios: [
-            {n: "Agachamento Livre", s: "4 x 8-10", t: ""},
-            {n: "Leg Press 45°", s: "4 x 10", t: ""},
-            {n: "Cadeira Flexora", s: "4 x 12-15", t: "Pausar 2s em baixo"},
-            {n: "Cadeira Extensora", s: "3 x 15", t: "Drop-set na última"},
-            {n: "Stiff", s: "3 x 10", t: "Foco Posterior"},
-            {n: "Panturrilha em pé", s: "5 x 15-20", t: ""},
-            {n: "Abdômen Rodinha", s: "3 x Falha", t: ""}
-        ]},
-        4: { nome: "Quinta: Descanso Ativo", exercicios: [{n: "Caminhada ao ar livre", s: "40-60 min", t: ""}] },
-        5: { nome: "Sexta: Superior + ABD", exercicios: [
-            {n: "Supino Reto (Barra)", s: "3 x 8", t: ""},
-            {n: "Puxada Supinada", s: "3 x 10", t: ""},
-            {n: "Remada Baixa (Triângulo)", s: "3 x 12", t: ""},
-            {n: "Rosca Direta", s: "3 x 8", t: "Carga para força"},
-            {n: "Abdômen Completo", s: "3 x Falha", t: ""},
-            {n: "Cardio: HIIT Esteira", s: "20 min", t: "1min rápido / 1min devagar"}
-        ]},
-        6: { nome: "Sábado: Inferior Completo", exercicios: [
-            {n: "Agachamento Sumô", s: "4 x 10-12", t: "Adutores e Glúteo"},
-            {n: "Agachamento Búlgaro", s: "3 x 12 (cada)", t: ""},
-            {n: "Cadeira Adutora", s: "3 x 15", t: ""},
-            {n: "Glúteo Coice (Máquina)", s: "3 x 12-15", t: ""},
-            {n: "Panturrilha Sentado", s: "4 x 20", t: ""},
-            {n: "Cardio: Moderado", s: "20 min", t: ""}
-        ]}
+        0: { nome: "DOM: Descanso Ativo", exs: [{n: "Caminhada Leve", s: "40 min", t: ""}]},
+        1: { nome: "SEG: Treino A (Empurrar)", exs: [{n: "Supino Inclinado", s: "4x10", t: ""},{n: "Supino Reto", s: "3x10", t: ""},{n: "Desenv. Militar", s: "4x10", t: ""},{n: "Elev. Lateral", s: "4x15", t: ""},{n: "Tríceps Testa", s: "3x12", t: ""},{n: "Abd Supra", s: "4x15", t: ""}]},
+        2: { nome: "TER: Treino B (Puxar)", exs: [{n: "Terra", s: "3x8", t: ""},{n: "Puxada Aberta", s: "4x10", t: ""},{n: "Remada Cavalinho", s: "4x10", t: ""},{n: "Elev. Pélvica", s: "4x12", t: ""},{n: "Rosca Direta", s: "3x10", t: ""},{n: "Glúteo Coice", s: "3x15", t: ""}]},
+        3: { nome: "QUA: Treino C (Pernas)", exs: [{n: "Agachamento", s: "4x10", t: ""},{n: "Leg Press", s: "4x10", t: ""},{n: "Flexora", s: "4x15", t: "Pausa 2s"},{n: "Extensora", s: "3x15", t: "Drop-set"},{n: "Stiff", s: "3x10", t: ""},{n: "Panturrilha", s: "5x20", t: ""}]},
+        4: { nome: "QUI: Descanso Ativo", exs: [{n: "Caminhada/Bike", s: "60 min", t: ""}]},
+        5: { nome: "SEX: Superior Completo", exs: [{n: "Supino Barra", s: "3x8", t: ""},{n: "Puxada Supinada", s: "3x10", t: ""},{n: "Desenv. Halter", s: "3x12", t: ""},{n: "Remada Baixa", s: "3x12", t: ""},{n: "Rosca Direta", s: "3x8", t: ""},{n: "Abd Completo", s: "3xFalha", t: ""}]},
+        6: { nome: "SÁB: Inferior Completo", exs: [{n: "Agach. Sumô", s: "4x12", t: ""},{n: "Búlgaro", s: "3x12", t: ""},{n: "Adutora", s: "3x15", t: ""},{n: "Glúteo Máquina", s: "3x15", t: ""},{n: "Panturrilha", s: "4x20", t: ""}]}
     };
 
     const dataDieta = [
-        {h: "Café da Manhã", d: "2 fatias pão + 3 ovos inteiros", p: "18g Prot"},
-        {h: "Almoço", d: "100g Arroz + 70g Feijão + 150g Frango + Salada", p: "45g Prot"},
-        {h: "Lanche (Pré-Treino)", d: "2 fatias pão + 100g Frango", p: "30g Prot"},
-        {h: "Jantar (Pós-Treino)", d: "80g Arroz + 150g Frango ou 4 ovos + Legumes", p: "45g/24g Prot"}
+        {h: "Café", d: "2 fatias pão + 3 ovos"},
+        {h: "Almoço", d: "100g Arroz + 70g Feijão + 150g Frango"},
+        {h: "Lanche", d: "2 fatias pão + 100g Frango"},
+        {h: "Jantar", d: "80g Arroz + 150g Frango ou 4 ovos"}
     ];
 
+    function changeDay(d) {
+        currentDay = d;
+        loadTreino();
+    }
+
     function showTab(tab) {
-        document.getElementById('tab-treino').classList.toggle('hidden', tab !== 'treino');
-        document.getElementById('tab-dieta').classList.toggle('hidden', tab !== 'dieta');
-        document.getElementById('btn-treino').classList.toggle('active', tab === 'treino');
-        document.getElementById('btn-dieta').classList.toggle('active', tab === 'dieta');
+        ['tab-treino', 'tab-dieta', 'tab-relatorio'].forEach(id => document.getElementById(id).classList.add('hidden'));
+        document.getElementById(`tab-${tab}`).classList.remove('hidden');
+        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+        document.getElementById(`btn-${tab}`).classList.add('active');
+        document.getElementById('day-nav').style.display = tab === 'treino' ? 'flex' : 'none';
+        if(tab === 'relatorio') updateCharts();
     }
 
-    function loadContent() {
-        const diaSemana = new Date().getDay(); 
-        const treinoHj = dataTreinos[diaSemana];
-        document.getElementById('current-day-title').innerText = treinoHj.nome;
-
-        const treinoDiv = document.getElementById('treino-content');
-        treinoDiv.innerHTML = treinoHj.exercicios.map((ex, i) => `
-            <div class="card" id="t-${diaSemana}-${i}">
+    function loadTreino() {
+        document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(`d${currentDay}`).classList.add('active');
+        const t = dataTreinos[currentDay];
+        document.getElementById('view-title').innerText = t.nome;
+        
+        document.getElementById('treino-content').innerHTML = t.exs.map((ex, i) => `
+            <div class="card ${localStorage.getItem(`t-${currentDay}-${i}`) ? 'done' : ''}" id="t-${currentDay}-${i}">
                 <div class="row">
-                    <div class="info" onclick="toggleDone('t-${diaSemana}-${i}')">
-                        <b>${ex.n}</b>
-                        <span>${ex.s}</span>
-                        ${ex.t ? `<span class="tip">${ex.t}</span>` : ''}
+                    <div class="info" onclick="toggle('t-${currentDay}-${i}')">
+                        <b>${ex.n}</b><span>${ex.s} ${ex.t ? `| ${ex.t}` : ''}</span>
                     </div>
-                    <input type="number" placeholder="kg" onchange="saveWeight(this.id)" id="w-${diaSemana}-${i}">
-                    <button class="btn-check" onclick="toggleDone('t-${diaSemana}-${i}')"></button>
+                    <input type="number" value="${localStorage.getItem(`w-${currentDay}-${i}`)||''}" onchange="localStorage.setItem('w-${currentDay}-${i}', this.value)" placeholder="kg">
+                    <div class="btn-check" onclick="toggle('t-${currentDay}-${i}')"></div>
                 </div>
             </div>
         `).join('');
+    }
 
-        const dietaDiv = document.getElementById('dieta-content');
-        dietaDiv.innerHTML = dataDieta.map((ref, i) => `
-            <div class="card" id="d-${i}">
+    function loadDieta() {
+        document.getElementById('dieta-content').innerHTML = dataDieta.map((r, i) => `
+            <div class="card ${localStorage.getItem(`d-${i}`) ? 'done' : ''}" id="d-${i}">
                 <div class="row">
-                    <div class="info" onclick="toggleDone('d-${i}')">
-                        <b>${ref.h}</b>
-                        <span>${ref.d}</span>
-                        <span class="tip">${ref.p}</span>
-                    </div>
-                    <button class="btn-check" onclick="toggleDone('d-${i}')"></button>
+                    <div class="info" onclick="toggle('d-${i}')"><b>${r.h}</b><span>${r.d}</span></div>
+                    <div class="btn-check" onclick="toggle('d-${i}')"></div>
                 </div>
             </div>
         `).join('');
-
-        // Recuperar estados salvos
-        loadSavedStates();
     }
 
-    function toggleDone(id) {
+    function toggle(id) {
         const el = document.getElementById(id);
         el.classList.toggle('done');
-        localStorage.setItem(id, el.classList.contains('done'));
-    }
-
-    function saveWeight(id) {
-        const val = document.getElementById(id).value;
-        localStorage.setItem(id, val);
+        el.classList.contains('done') ? localStorage.setItem(id, 'true') : localStorage.removeItem(id);
     }
 
     function addWater() {
-        let val = parseFloat(localStorage.getItem('water') || 0);
-        val += 0.25;
-        localStorage.setItem('water', val);
-        document.getElementById('water-val').innerText = val.toFixed(2);
+        let w = parseFloat(localStorage.getItem('water') || 0) + 0.25;
+        localStorage.setItem('water', w);
+        document.getElementById('water-val').innerText = w.toFixed(2);
     }
 
-    function loadSavedStates() {
-        document.querySelectorAll('.card').forEach(card => {
-            if(localStorage.getItem(card.id) === 'true') card.classList.add('done');
-        });
-        document.querySelectorAll('input[type="number"]').forEach(input => {
-            input.value = localStorage.getItem(input.id) || "";
-        });
-        document.getElementById('water-val').innerText = parseFloat(localStorage.getItem('water') || 0).toFixed(2);
+    function savePeso() {
+        const p = document.getElementById('peso-input').value;
+        if(!p) return;
+        let historico = JSON.parse(localStorage.getItem('pesoHistory') || '[]');
+        historico.push({ data: new Date().toLocaleDateString(), valor: p });
+        localStorage.setItem('pesoHistory', JSON.stringify(historico));
+        updateCharts();
     }
 
-    loadContent();
+    function updateCharts() {
+        const ctxW = document.getElementById('weightChart').getContext('2d');
+        const hist = JSON.parse(localStorage.getItem('pesoHistory') || '[]');
+        if(window.wChart) window.wChart.destroy();
+        window.wChart = new Chart(ctxW, {
+            type: 'line',
+            data: {
+                labels: hist.map(h => h.data),
+                datasets: [{ label: 'Peso (kg)', data: hist.map(h => h.valor), borderColor: '#ccff00', tension: 0.3 }]
+            }
+        });
+    }
+
+    loadTreino(); loadDieta();
+    document.getElementById('water-val').innerText = parseFloat(localStorage.getItem('water')||0).toFixed(2);
 </script>
 </body>
 </html>
